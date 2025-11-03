@@ -41,5 +41,4 @@ out/
 .env.*
 
 # Ignorar archivos de Docker
-Dockerfile
 docker-compose.yml
