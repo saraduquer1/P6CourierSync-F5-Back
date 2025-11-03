@@ -28,10 +28,14 @@ out/
 
 ### NetBeans ###
 /nbproject/private/
-/nbbuild/
+/nbbuild/7
 /dist/
 /nbdist/
 /.nb-gradle/
 
 ### VS Code ###
 .vscode/
+
+### Environment Variables ###
+.env
+.env.*
