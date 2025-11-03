@@ -39,3 +39,7 @@ out/
 ### Environment Variables ###
 .env
 .env.*
+
+# Ignorar archivos de Docker
+Dockerfile
+docker-compose.yml
