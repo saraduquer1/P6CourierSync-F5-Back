@@ -18,42 +18,43 @@ import java.util.Optional;
  */
 @Service
 public class UserService implements UserDetailsService {
-    
+
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
-    
+
     @Autowired
     public UserService(UserRepository userRepository, PasswordEncoder passwordEncoder) {
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
     }
-    
+
     /**
-     * Load user by username for Spring Security.
-     * 
-     * @param username the username
+     * Load user by username OR email for Spring Security.
+     *
+     * @param usernameOrEmail the username or email
      * @return UserDetails
      * @throws UsernameNotFoundException if user not found
      */
     @Override
-    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        return userRepository.findByUsername(username)
-                .orElseThrow(() -> new UsernameNotFoundException("User not found: " + username));
+    public UserDetails loadUserByUsername(String usernameOrEmail) throws UsernameNotFoundException {
+        // Try to find by username or email
+        return userRepository.findByUsernameOrEmail(usernameOrEmail, usernameOrEmail)
+                .orElseThrow(() -> new UsernameNotFoundException("User not found: " + usernameOrEmail));
     }
-    
+
     /**
      * Find user by username or email.
-     * 
+     *
      * @param usernameOrEmail the username or email
      * @return Optional containing the user if found
      */
     public Optional<User> findByUsernameOrEmail(String usernameOrEmail) {
         return userRepository.findByUsernameOrEmail(usernameOrEmail, usernameOrEmail);
     }
-    
+
     /**
      * Save a new user.
-     * 
+     *
      * @param user the user to save
      * @return the saved user
      */
@@ -62,49 +63,49 @@ public class UserService implements UserDetailsService {
         user.setPassword(passwordEncoder.encode(user.getPassword()));
         return userRepository.save(user);
     }
-    
+
     /**
      * Check if username exists.
-     * 
+     *
      * @param username the username to check
      * @return true if exists, false otherwise
      */
     public boolean existsByUsername(String username) {
         return userRepository.existsByUsername(username);
     }
-    
+
     /**
      * Check if email exists.
-     * 
+     *
      * @param email the email to check
      * @return true if exists, false otherwise
      */
     public boolean existsByEmail(String email) {
         return userRepository.existsByEmail(email);
     }
-    
+
     /**
      * Find user by ID.
-     * 
+     *
      * @param id the user ID
      * @return Optional containing the user if found
      */
     public Optional<User> findById(Long id) {
         return userRepository.findById(id);
     }
-    
+
     /**
      * Find all users.
-     * 
-     * @return List of all users
+     *
+     * @return list of all users
      */
     public List<User> findAll() {
         return userRepository.findAll();
     }
-    
+
     /**
      * Delete user by ID.
-     * 
+     *
      * @param id the user ID
      */
     public void deleteById(Long id) {
