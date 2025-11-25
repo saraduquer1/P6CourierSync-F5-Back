@@ -1,6 +1,7 @@
 package com.fabrica.p6f5.springapp.invoice.dto;
 
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
@@ -19,29 +20,40 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 public class UpdateInvoiceRequest {
-    
+
     @NotBlank(message = "Client name is required")
     private String clientName;
-    
+
+    private String clientNit;
+
+    private String clientAddress;
+
+    @Email(message = "Invalid email format")
+    private String clientEmail;
+
     @NotNull(message = "Invoice date is required")
     private LocalDate invoiceDate;
-    
+
     @NotNull(message = "Due date is required")
     private LocalDate dueDate;
-    
+
+    private String paymentMethod;
+
     @NotEmpty(message = "At least one item is required")
     @Valid
     private List<InvoiceItemRequest> items;
-    
+
     private List<Long> shipmentIds;
-    
+
     @NotNull(message = "Tax amount is required")
     private BigDecimal taxAmount;
-    
+
     private String currency = "USD";
-    
+
+    private String observations;
+
     private Integer version;
-    
+
     /**
      * Nested DTO for invoice items
      */
@@ -49,17 +61,16 @@ public class UpdateInvoiceRequest {
     @NoArgsConstructor
     @AllArgsConstructor
     public static class InvoiceItemRequest {
-        
+
         private Long shipmentId;
-        
+
         @NotBlank(message = "Description is required")
         private String description;
-        
+
         @NotNull(message = "Quantity is required")
         private Integer quantity;
-        
+
         @NotNull(message = "Unit price is required")
         private BigDecimal unitPrice;
     }
 }
-

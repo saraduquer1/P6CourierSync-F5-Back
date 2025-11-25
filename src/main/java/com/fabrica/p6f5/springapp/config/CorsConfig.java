@@ -15,8 +15,9 @@ public class CorsConfig {
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
         configuration.setAllowedOrigins(Arrays.asList(
-                "http://localhost:8080",
-                "https://p6-courier-sync-f5-front.vercel.app"
+                "http://localhost:5173",  // Desarrollo local con Vite
+                "http://localhost:8080",  // Por si usas el puerto anterior
+                "https://p6-courier-sync-f5-front.vercel.app"  // Producción
         ));
         configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS"));
         configuration.setAllowedHeaders(Arrays.asList("*"));

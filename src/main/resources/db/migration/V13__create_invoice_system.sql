@@ -1,4 +1,4 @@
--- Migration V3: Create Invoice System Tables
+-- Migration V10: Create Invoice System Tables
 -- This migration creates all tables for the invoice, shipment, and audit microservices
 
 -- ============================================
@@ -42,14 +42,19 @@ CREATE TABLE IF NOT EXISTS invoices (
     fiscal_folio VARCHAR(100) UNIQUE,
     invoice_number VARCHAR(100) UNIQUE NOT NULL,
     client_name VARCHAR(255) NOT NULL,
+    client_nit VARCHAR(50),
+    client_address TEXT,
+    client_email VARCHAR(255),
     invoice_date DATE NOT NULL,
     due_date DATE NOT NULL,
+    payment_method VARCHAR(100),
     subtotal DECIMAL(10, 2) NOT NULL,
     tax_amount DECIMAL(10, 2) DEFAULT 0.00,
     total_amount DECIMAL(10, 2) NOT NULL,
     currency VARCHAR(10) DEFAULT 'USD',
     invoice_status VARCHAR(50) NOT NULL DEFAULT 'DRAFT',
     pdf_url TEXT,
+    observations TEXT,
     created_by BIGINT NOT NULL,
     created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
@@ -63,6 +68,8 @@ CREATE INDEX IF NOT EXISTS idx_invoice_status ON invoices(invoice_status);
 CREATE INDEX IF NOT EXISTS idx_invoice_fiscal ON invoices(fiscal_folio);
 CREATE INDEX IF NOT EXISTS idx_invoice_date ON invoices(invoice_date);
 CREATE INDEX IF NOT EXISTS idx_invoice_client ON invoices(client_name);
+CREATE INDEX IF NOT EXISTS idx_invoice_client_email ON invoices(client_email);
+CREATE INDEX IF NOT EXISTS idx_invoice_payment_method ON invoices(payment_method);
 CREATE INDEX IF NOT EXISTS idx_invoice_created ON invoices(created_at);
 
 CREATE TABLE IF NOT EXISTS invoice_items (
@@ -89,7 +96,7 @@ CREATE TABLE IF NOT EXISTS invoice_shipments (
     shipment_id BIGINT NOT NULL,
     created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
     CONSTRAINT fk_inv_ship_invoice FOREIGN KEY (invoice_id) REFERENCES invoices(invoice_id) ON DELETE CASCADE,
-    CONSTRAINT fk_inv_ship_shipment FOREIGN KEY (shipment_id) REFERENCES shipments(shipment_id) ON DELETE RESTRICT,
+    CONSTRAINT fk_inv_ship_shipment FOREIGN KEY (shipment_id) REFERENCES invoices(invoice_id) ON DELETE RESTRICT,
     CONSTRAINT uk_invoice_shipment UNIQUE (invoice_id, shipment_id)
 );
 
@@ -172,4 +179,3 @@ COMMENT ON TABLE invoice_shipments IS 'Many-to-many relationship between invoice
 COMMENT ON TABLE audit_logs IS 'Audit trail for all entity changes across the system';
 COMMENT ON TABLE invoice_history IS 'Version history for invoices to enable undo/revert functionality';
 COMMENT ON TABLE pdf_logs IS 'Log of PDF generation attempts and results';
-

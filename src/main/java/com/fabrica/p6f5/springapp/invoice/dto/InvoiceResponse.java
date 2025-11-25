@@ -18,26 +18,31 @@ import java.util.stream.Collectors;
 @NoArgsConstructor
 @AllArgsConstructor
 public class InvoiceResponse {
-    
+
     private Long id;
     private String fiscalFolio;
     private String invoiceNumber;
     private String clientName;
+    private String clientNit;
+    private String clientAddress;
+    private String clientEmail;
     private LocalDate invoiceDate;
     private LocalDate dueDate;
+    private String paymentMethod;
     private BigDecimal subtotal;
     private BigDecimal taxAmount;
     private BigDecimal totalAmount;
     private String currency;
     private String status;
     private String pdfUrl;
+    private String observations;
     private Long createdBy;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
     private Integer version;
     private List<InvoiceItemResponse> items;
     private List<Long> shipmentIds;
-    
+
     /**
      * Convert Invoice entity to InvoiceResponse DTO
      */
@@ -47,34 +52,39 @@ public class InvoiceResponse {
         response.setFiscalFolio(invoice.getFiscalFolio());
         response.setInvoiceNumber(invoice.getInvoiceNumber());
         response.setClientName(invoice.getClientName());
+        response.setClientNit(invoice.getClientNit());
+        response.setClientAddress(invoice.getClientAddress());
+        response.setClientEmail(invoice.getClientEmail());
         response.setInvoiceDate(invoice.getInvoiceDate());
         response.setDueDate(invoice.getDueDate());
+        response.setPaymentMethod(invoice.getPaymentMethod());
         response.setSubtotal(invoice.getSubtotal());
         response.setTaxAmount(invoice.getTaxAmount());
         response.setTotalAmount(invoice.getTotalAmount());
         response.setCurrency(invoice.getCurrency());
         response.setStatus(invoice.getStatus().toString());
         response.setPdfUrl(invoice.getPdfUrl());
+        response.setObservations(invoice.getObservations());
         response.setCreatedBy(invoice.getCreatedBy());
         response.setCreatedAt(invoice.getCreatedAt());
         response.setUpdatedAt(invoice.getUpdatedAt());
         response.setVersion(invoice.getVersion());
-        
+
         if (invoice.getItems() != null) {
             response.setItems(invoice.getItems().stream()
-                .map(InvoiceItemResponse::fromEntity)
-                .collect(Collectors.toList()));
+                    .map(InvoiceItemResponse::fromEntity)
+                    .collect(Collectors.toList()));
         }
-        
+
         if (invoice.getShipments() != null) {
             response.setShipmentIds(invoice.getShipments().stream()
-                .map(is -> is.getShipment().getId())
-                .collect(Collectors.toList()));
+                    .map(is -> is.getShipment().getId())
+                    .collect(Collectors.toList()));
         }
-        
+
         return response;
     }
-    
+
     /**
      * Nested DTO for invoice items
      */
@@ -82,14 +92,14 @@ public class InvoiceResponse {
     @NoArgsConstructor
     @AllArgsConstructor
     public static class InvoiceItemResponse {
-        
+
         private Long id;
         private Long shipmentId;
         private String description;
         private Integer quantity;
         private BigDecimal unitPrice;
         private BigDecimal totalPrice;
-        
+
         /**
          * Convert InvoiceItem entity to InvoiceItemResponse DTO
          */
@@ -107,4 +117,3 @@ public class InvoiceResponse {
         }
     }
 }
-

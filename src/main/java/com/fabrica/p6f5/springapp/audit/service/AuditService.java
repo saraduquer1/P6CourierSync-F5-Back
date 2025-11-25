@@ -8,7 +8,9 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
@@ -31,11 +33,21 @@ public class AuditService {
     
     @Autowired
     private ObjectMapper objectMapper;
+
+    // Constructor explícito
+    public AuditService(
+            InvoiceHistoryRepository invoiceHistoryRepository,
+            AuditLogRepository auditLogRepository,
+            @Qualifier("auditObjectMapper") ObjectMapper objectMapper) {
+        this.invoiceHistoryRepository = invoiceHistoryRepository;
+        this.auditLogRepository = auditLogRepository;
+        this.objectMapper = objectMapper;
+    }
     
     /**
      * Log an audit event
      */
-    @Transactional
+    @Transactional(propagation = Propagation.REQUIRES_NEW)
     public AuditLog logEvent(String entityType, Long entityId, AuditLog.AuditAction action, 
                             Long changedBy, Object oldData, Object newData, String changeSummary) {
         try {
@@ -63,7 +75,7 @@ public class AuditService {
     /**
      * Save invoice history version
      */
-    @Transactional
+    @Transactional(propagation = Propagation.REQUIRES_NEW)
     public InvoiceHistory saveInvoiceHistory(Long invoiceId, Integer version, String fiscalFolio,
                                              String invoiceNumber, Object invoiceData, Long createdBy) {
         try {
